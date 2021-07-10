@@ -9,9 +9,12 @@
 
     public interface FileSystemProvider
     {
+        void RootFolder(
+            string root
+        );
+
         FileSystemResponse GetFiles(
             string path,
-            bool showHiddenItems,
             params FileSystemDirectoryContent[] data
         );
 
@@ -62,7 +65,6 @@
         FileSystemResponse Search(
             string path,
             string searchString,
-            bool showHiddenItems,
             bool caseSensitive,
             params FileSystemDirectoryContent[] data
         );

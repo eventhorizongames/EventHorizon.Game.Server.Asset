@@ -22,14 +22,16 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "dotnetRunMessages": "true",
-            "applicationUrl": "https://localhost:5001;http://localhost:5000"
+            "applicationUrl": "https://localhost:8081;http://localhost:8080"
         },
         "Docker": {
             "commandName": "Docker",
             "launchBrowser": true,
             "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
             "publishAllPorts": true,
-            "useSSL": true
+            "useSSL": true,
+            "httpPort": 8080,
+            "sslPort": 8081
         }
     }
 }

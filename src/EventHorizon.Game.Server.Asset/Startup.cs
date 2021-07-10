@@ -1,7 +1,15 @@
 namespace EventHorizon.Game.Server.Asset
 {
+    using System;
     using System.IO;
     using System.Linq;
+
+    using EventHorizon.Game.Server.Asset.FileManagement.Api;
+    using EventHorizon.Game.Server.Asset.FileManagement.Providers;
+    using EventHorizon.Game.Server.Asset.Policies;
+    using EventHorizon.Game.Server.Asset.SwaggerFilters;
+
+    using IdentityModel.AspNetCore.OAuth2Introspection;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -11,21 +19,81 @@ namespace EventHorizon.Game.Server.Asset
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.OpenApi.Models;
+
+    using Swashbuckle.AspNetCore.Filters;
 
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(
+            IConfiguration configuration,
+            IWebHostEnvironment env
+        )
         {
             Configuration = configuration;
+            HostingEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddSwaggerGen(
+                options =>
+                {
+                    options.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Title = "Game Development Platform - Asset Server",
+                        Version = "V1",
+                        Description = "",
+                        TermsOfService = new Uri("https://ehzgames.studio/terms-of-service"),
+                        Contact = new OpenApiContact
+                        {
+                            Name = "Cody Merritt Anhorn",
+                            Email = "cody.anhorn+asset_server@hotmail.com",
+                            Url = new Uri("https://codyanhorn.tech"),
+                        },
+                    });
+
+                    options.AddSecurityDefinition(
+                        "oauth2",
+                        new OpenApiSecurityScheme()
+                        {
+                            Description = "Authorization header using the Bearer scheme.",
+                            Name = "Authorization",
+                            In = ParameterLocation.Header,
+                        }
+                    );
+
+                    options.OperationFilter<UploadFileOperationFilter>();
+                    options.OperationFilter<SecurityRequirementsOperationFilter>();
+                }
+            );
+
+            services.AddControllers();
+
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.RequireHttpsMetadata = HostingEnvironment.IsProduction() || HostingEnvironment.IsStaging();
+                    options.Authority = Configuration["Auth:Authority"];
+                    options.ApiName = Configuration["Auth:ApiName"];
+                    options.SupportedTokens = IdentityServer4.AccessTokenValidation.SupportedTokens.Jwt;
+
+                    static string FromHeaderAndQueryString(HttpRequest request)
+                    {
+                        var token = TokenRetrieval.FromAuthorizationHeader()(request);
+
+                        return token;
+                    }
+                    options.TokenRetriever = FromHeaderAndQueryString;
+                });
+            services.AddAuthorization(
+                options => options.AddUserIdOrAdminPolicy(
+                    Configuration["OwnerDetails:UserId"]
+                )
+            );
 
             services.AddCors(
                 options => options.AddPolicy(
@@ -50,9 +118,10 @@ namespace EventHorizon.Game.Server.Asset
 
             services.AddDirectoryBrowser();
 
+            services.AddTransient<FileSystemProvider, PhysicalFileSystemProvider>();
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -83,13 +152,27 @@ namespace EventHorizon.Game.Server.Asset
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapControllers();
                 endpoints.MapGet("/", async context =>
                 {
-                    await context.Response.WriteAsync("Hello World!");
+                    context.Response.ContentType = "text/html";
+                    await context.Response.WriteAsync("<h1>Hello World!</h1>");
+                    await context.Response.WriteAsync("<a href=\"/swagger\">Swagger API</1>");
                 });
+            });
+
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1/swagger.json", "EventHorizon Asset Server API V1");
             });
         }
     }

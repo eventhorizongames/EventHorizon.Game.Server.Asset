@@ -1,6 +1,8 @@
 ﻿namespace EventHorizon.Game.Server.Asset.FileManagement.Model
 {
-    public class FileDetails
+    public enum Permission
     {
+        Allow,
+        Deny
     }
 }
