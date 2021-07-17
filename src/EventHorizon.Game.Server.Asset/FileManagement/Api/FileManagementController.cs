@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Web;
 
     using EventHorizon.Game.Server.Asset.FileManagement.Model;
     using EventHorizon.Game.Server.Asset.Policies;
@@ -84,6 +85,54 @@
             }
 
             return Ok(
+                result
+            );
+        }
+
+        [HttpPost("CreateDirectory")]
+        [ProducesResponseType(typeof(FileSystemResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status417ExpectationFailed)]
+        public IActionResult CreateDirectory(
+            string? path,
+            string? name
+        )
+        {
+            if (path is null)
+            {
+                return BadRequest(
+                    new ErrorDetails
+                    {
+                        Code = StatusCodes.Status400BadRequest,
+                        Message = "Path is Required."
+                    }
+                );
+            }
+            else if (name is null)
+            {
+                return BadRequest(
+                    new ErrorDetails
+                    {
+                        Code = StatusCodes.Status400BadRequest,
+                        Message = "Name is Required."
+                    }
+                );
+            }
+
+            var result = _fileSystemProvider.Create(
+                path,
+                name
+            );
+            if (result.Error is not null)
+            {
+                return StatusCode(result.Error.Code, result.Error);
+            }
+            var directoryPath = $"{path}/{name}";
+
+            return Created(
+                $"/api/FileManagement/GetFiles?path={HttpUtility.UrlEncode(directoryPath)}",
                 result
             );
         }

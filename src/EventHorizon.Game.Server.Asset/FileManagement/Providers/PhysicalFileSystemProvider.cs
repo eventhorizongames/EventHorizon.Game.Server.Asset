@@ -65,7 +65,87 @@
 
         public FileSystemResponse Create(string path, string name, params FileSystemDirectoryContent[] data)
         {
-            throw new NotImplementedException("Create");
+            var accessMessage = string.Empty;
+            var createResponse = new FileSystemResponse();
+            try
+            {
+                var permission = GetPathPermission(path);
+                if (permission != null
+                    && (!permission.Read || !permission.WriteContents)
+                )
+                {
+                    accessMessage = permission.Message;
+                    throw new UnauthorizedAccessException(
+                        string.Format(
+                            "'{0}' is not accessible. You need permission to perform the write action.",
+                            GetFileNameFromPath(rootName + path)
+                        )
+                    );
+                }
+
+                string newDirectoryPath = Path.Combine(contentRootPath + path, name);
+
+                bool directoryExist = Directory.Exists(newDirectoryPath);
+
+                if (directoryExist)
+                {
+                    var exist = new DirectoryInfo(
+                        newDirectoryPath
+                    );
+                    var errorDetails = new ErrorDetails
+                    {
+                        Code = StatusCodes.Status400BadRequest,
+                        Message = string.Format(
+                            "A file or folder with the name {0} already exists.",
+                            exist.Name
+                        )
+                    };
+                    createResponse.Error = errorDetails;
+
+                    return createResponse;
+                }
+
+                var physicalPath = GetPath(path);
+                Directory.CreateDirectory(
+                    newDirectoryPath
+                );
+
+                var directory = new DirectoryInfo(newDirectoryPath);
+                var createData = new FileSystemDirectoryContent
+                {
+                    Name = directory.Name,
+                    IsFile = false,
+                    Size = 0,
+                    DateModified = directory.LastWriteTime,
+                    DateCreated = directory.CreationTime,
+                    HasChild = CheckChild(directory.FullName),
+                    Type = directory.Extension,
+                    Permission = GetPermission(physicalPath, directory.Name, false)
+                };
+
+                createResponse.Files = new FileSystemDirectoryContent[] { createData };
+
+                return createResponse;
+            }
+            catch (Exception e)
+            {
+                var er = new ErrorDetails
+                {
+                    Message = e.Message,
+                };
+                er.Code = er.Message.Contains("is not accessible. You need permission")
+                    ? StatusCodes.Status401Unauthorized
+                    : StatusCodes.Status417ExpectationFailed;
+                if (er.Code == StatusCodes.Status401Unauthorized
+                    && accessMessage.IsNotBlank()
+                )
+                {
+                    er.Message = accessMessage;
+                }
+                createResponse.Error = er;
+
+                return createResponse;
+            }
         }
 
         public FileSystemResponse Delete(
@@ -1138,7 +1218,7 @@
                 {
                     break;
                 }
-                else if (PathPermission != null 
+                else if (PathPermission != null
                     && !PathPermission.Read
                 )
                 {

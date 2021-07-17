@@ -18,8 +18,4 @@
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="App_Data\" />
-    </ItemGroup>
-
 </Project>
