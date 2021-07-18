@@ -33,7 +33,7 @@
 
         public string? Id { get; set; }
 
-        public string? FilterPath { get; set; }
+        public string FilterPath { get; set; } = string.Empty;
 
         public string? FilterId { get; set; }
 
