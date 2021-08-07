@@ -15,6 +15,9 @@ WORKDIR /source
 RUN dotnet publish --no-restore src/EventHorizon.Game.Server.Asset/EventHorizon.Game.Server.Asset.csproj -c Release -o /app/publish
 
 FROM base AS final
+ARG BUILD_VERSION=0.0.0
+ENV APPLICATION_VERSION=$BUILD_VERSION
+
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "EventHorizon.Game.Server.Asset.dll"]
