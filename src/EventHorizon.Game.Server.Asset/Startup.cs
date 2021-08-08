@@ -4,12 +4,17 @@ namespace EventHorizon.Game.Server.Asset
     using System.IO;
     using System.Linq;
 
+    using EventHorizon.BackgroundTasks;
+    using EventHorizon.Game.Server.Asset.Export;
     using EventHorizon.Game.Server.Asset.FileManagement.Api;
     using EventHorizon.Game.Server.Asset.FileManagement.Providers;
+    using EventHorizon.Game.Server.Asset.Hub.Base;
     using EventHorizon.Game.Server.Asset.Policies;
     using EventHorizon.Game.Server.Asset.SwaggerFilters;
 
     using IdentityModel.AspNetCore.OAuth2Introspection;
+
+    using MediatR;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -118,7 +123,22 @@ namespace EventHorizon.Game.Server.Asset
 
             services.AddDirectoryBrowser();
 
+            services.AddSignalR();
+
+            services.AddMediatR(
+                new Type[]
+                {
+                    typeof(Startup),
+
+                    typeof(BackgroundTasksStartupExtensions),
+                }
+            );
+
             services.AddTransient<FileSystemProvider, PhysicalFileSystemProvider>();
+
+            services.AddExportServices();
+
+            services.AddBackgroundTasksServices();
 
         }
 
@@ -145,9 +165,25 @@ namespace EventHorizon.Game.Server.Asset
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")
+                    Path.Combine(env.ContentRootPath, "wwwroot")
                 ),
                 RequestPath = "/Assets",
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "Exports")
+                ),
+                RequestPath = "/Exports"
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "Exports")
+                ),
+                RequestPath = "/Exports",
             });
 
             app.UseRouting();
@@ -157,6 +193,9 @@ namespace EventHorizon.Game.Server.Asset
 
             app.UseEndpoints(endpoints =>
             {
+
+                endpoints.MapHub<AdminHub>("/admin");
+
                 endpoints.MapControllers();
                 endpoints.MapGet("/", async context =>
                 {
