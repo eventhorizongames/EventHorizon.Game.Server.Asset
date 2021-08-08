@@ -10,7 +10,7 @@
         public static IServiceCollection AddExportServices(
             this IServiceCollection services
         ) => services
-            .AddSingleton<ExportStatusService, StandardExportStatusService>()
+            .AddSingleton<ExportArtifactService, StandardExportArtifactService>()
             .AddSingleton<ExportTriggerService, StandardExportTriggerService>()
         ;
     }

@@ -1,8 +1,8 @@
 ﻿namespace EventHorizon.Game.Server.Asset.Hub.Base
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    using EventHorizon.Game.Server.Asset.Admin.Model;
     using EventHorizon.Game.Server.Asset.Core.Command;
     using EventHorizon.Game.Server.Asset.Export.Model;
     using EventHorizon.Game.Server.Asset.Export.Query;
@@ -13,16 +13,12 @@
     public partial class AdminHub
         : Hub
     {
-        public async Task<ApiResponse<ExportStatus>> Export_Status()
+        public async Task<CommandResult<IEnumerable<ExportArtifact>>> Export_ArtifactList()
         {
-            return new ApiResponse<ExportStatus>
-            {
-                Success = true,
-                Result = await _sender.Send(
-                    new QueryForExportStatus(),
-                    Context.ConnectionAborted
-                ),
-            };
+            return await _sender.Send(
+                new QueryForExportArtifactList(),
+                Context.ConnectionAborted
+            );
         }
 
         public async Task<CommandResult<ExportTriggerResult>> Export_Trigger()

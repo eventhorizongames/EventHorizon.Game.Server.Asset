@@ -12,8 +12,6 @@ namespace EventHorizon.Game.Server.Asset
     using EventHorizon.Game.Server.Asset.Policies;
     using EventHorizon.Game.Server.Asset.SwaggerFilters;
 
-    using IdentityModel.AspNetCore.OAuth2Introspection;
-
     using MediatR;
 
     using Microsoft.AspNetCore.Builder;
@@ -85,14 +83,8 @@ namespace EventHorizon.Game.Server.Asset
                     options.Authority = Configuration["Auth:Authority"];
                     options.ApiName = Configuration["Auth:ApiName"];
                     options.SupportedTokens = IdentityServer4.AccessTokenValidation.SupportedTokens.Jwt;
-
-                    static string FromHeaderAndQueryString(HttpRequest request)
-                    {
-                        var token = TokenRetrieval.FromAuthorizationHeader()(request);
-
-                        return token;
-                    }
-                    options.TokenRetriever = FromHeaderAndQueryString;
+ 
+                    options.TokenRetriever = WebSocketTokenRetriever.FromHeaderAndQueryString;
                 });
             services.AddAuthorization(
                 options => options.AddUserIdOrAdminPolicy(

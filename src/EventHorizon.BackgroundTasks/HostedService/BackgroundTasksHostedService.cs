@@ -42,7 +42,7 @@
                 try
                 {
                     _logger.LogInformation(
-                        "Running to Run Task: {@BackgroundTask}",
+                        "Running Task: {@BackgroundTask}",
                         task
                     );
 
@@ -58,7 +58,7 @@
                         );
 
                     _logger.LogInformation(
-                        "Finished to Running Task: {@BackgroundTask}",
+                        "Finished Running Task: {@BackgroundTask}",
                         task
                     );
                 }
