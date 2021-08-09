@@ -12,13 +12,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		azure-pipelines.yml = azure-pipelines.yml
+		Dockerfile = Dockerfile
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventHorizon.Game.Server.Asset", "src\EventHorizon.Game.Server.Asset\EventHorizon.Game.Server.Asset.csproj", "{F687983C-7FA0-468A-8487-CF676A31DE19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHorizon.BackgroundTasks", "src\EventHorizon.BackgroundTasks\EventHorizon.BackgroundTasks.csproj", "{16080621-9CF5-4D6F-9132-58EE2E0BBAE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventHorizon.BackgroundTasks", "src\EventHorizon.BackgroundTasks\EventHorizon.BackgroundTasks.csproj", "{16080621-9CF5-4D6F-9132-58EE2E0BBAE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
