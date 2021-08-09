@@ -250,5 +250,4 @@ appsettings.*.json
 desktopsettings.*.json
 
 app
-exports
-imports
+**/App_Data

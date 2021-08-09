@@ -8,5 +8,4 @@ app
 **/appsettings.*.json
 **/certificate.pfx
 **/global.json
-exports
-imports
+**/App_Data

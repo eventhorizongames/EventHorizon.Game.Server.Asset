@@ -5,6 +5,8 @@ namespace EventHorizon.Game.Server.Asset
     using System.Linq;
 
     using EventHorizon.BackgroundTasks;
+    using EventHorizon.Game.Server.Asset.Core.Api;
+    using EventHorizon.Game.Server.Asset.Core.Model;
     using EventHorizon.Game.Server.Asset.Export;
     using EventHorizon.Game.Server.Asset.FileManagement.Api;
     using EventHorizon.Game.Server.Asset.FileManagement.Providers;
@@ -83,7 +85,7 @@ namespace EventHorizon.Game.Server.Asset
                     options.Authority = Configuration["Auth:Authority"];
                     options.ApiName = Configuration["Auth:ApiName"];
                     options.SupportedTokens = IdentityServer4.AccessTokenValidation.SupportedTokens.Jwt;
- 
+
                     options.TokenRetriever = WebSocketTokenRetriever.FromHeaderAndQueryString;
                 });
             services.AddAuthorization(
@@ -126,6 +128,8 @@ namespace EventHorizon.Game.Server.Asset
                 }
             );
 
+            services.AddSingleton<AssetServerContentDirectories, StaticAssetServerContentDirectories>();
+
             services.AddTransient<FileSystemProvider, PhysicalFileSystemProvider>();
 
             services.AddExportServices();
@@ -134,7 +138,11 @@ namespace EventHorizon.Game.Server.Asset
 
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            AssetServerContentDirectories directories
+        )
         {
             if (env.IsDevelopment())
             {
@@ -157,7 +165,10 @@ namespace EventHorizon.Game.Server.Asset
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.ContentRootPath, "wwwroot")
+                    Path.Combine(
+                        env.ContentRootPath,
+                        directories.AssetDirectory
+                    )
                 ),
                 RequestPath = "/Assets",
             });
@@ -165,17 +176,49 @@ namespace EventHorizon.Game.Server.Asset
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.ContentRootPath, "Exports")
+                    Path.Combine(
+                        env.ContentRootPath,
+                        directories.DataDirectory,
+                        directories.ExportsDirectory
+                    )
                 ),
-                RequestPath = "/Exports"
+                RequestPath = $"/{directories.ExportsDirectory}",
             });
 
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.ContentRootPath, "Exports")
+                    Path.Combine(
+                        env.ContentRootPath,
+                        directories.DataDirectory,
+                        directories.ExportsDirectory
+                    )
                 ),
-                RequestPath = "/Exports",
+                RequestPath = $"/{directories.ExportsDirectory}",
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(
+                        env.ContentRootPath,
+                        directories.DataDirectory,
+                        directories.ImportsDirectory
+                    )
+                ),
+                RequestPath = $"/{directories.ImportsDirectory}",
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(
+                        env.ContentRootPath,
+                        directories.DataDirectory,
+                        directories.ImportsDirectory
+                    )
+                ),
+                RequestPath = $"/{directories.ImportsDirectory}",
             });
 
             app.UseRouting();
@@ -193,7 +236,16 @@ namespace EventHorizon.Game.Server.Asset
                 {
                     context.Response.ContentType = "text/html";
                     await context.Response.WriteAsync("<h1>Hello World!</h1>");
-                    await context.Response.WriteAsync("<a href=\"/swagger\">Swagger API</1>");
+                    await context.Response.WriteAsync("<a href=\"/swagger\">Swagger API</a>");
+                    await context.Response.WriteAsync("<br />");
+                    await context.Response.WriteAsync("<br />");
+                    await context.Response.WriteAsync("<a href=\"/Assets\">Assets</a>");
+                    await context.Response.WriteAsync("<br />");
+                    await context.Response.WriteAsync("<br />");
+                    await context.Response.WriteAsync($"<a href=\"/{directories.ExportsDirectory}\">Exports</a>");
+                    await context.Response.WriteAsync("<br />");
+                    await context.Response.WriteAsync("<br />");
+                    await context.Response.WriteAsync($"<a href=\"/{directories.ImportsDirectory}\">Imports</a>");
                 });
             });
 

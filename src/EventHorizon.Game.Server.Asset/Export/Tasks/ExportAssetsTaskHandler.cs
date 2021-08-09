@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
 
     using EventHorizon.BackgroundTasks.Model;
+    using EventHorizon.Game.Server.Asset.Core.Api;
     using EventHorizon.Game.Server.Asset.Export.ClientActions;
 
     using MediatR;
@@ -19,14 +20,17 @@
     {
         private readonly IWebHostEnvironment _environment;
         private readonly IPublisher _publisher;
+        private readonly AssetServerContentDirectories _directories;
 
         public ExportAssetsTaskHandler(
             IWebHostEnvironment environment,
-            IPublisher publisher
+            IPublisher publisher,
+            AssetServerContentDirectories directories
         )
         {
             _environment = environment;
             _publisher = publisher;
+            _directories = directories;
         }
 
         public async Task<BackgroundTaskResult> Handle(
@@ -36,11 +40,12 @@
         {
             var pathToZip = Path.Combine(
                 _environment.ContentRootPath,
-                "wwwroot"
+                _directories.AssetDirectory
             );
             var destinationPath = Path.Combine(
                 _environment.ContentRootPath,
-                "Exports"
+                _directories.DataDirectory,
+                _directories.ExportsDirectory
             );
             var exportFileName = $"export.{DateTimeOffset.UtcNow.Ticks}.{request.ReferenceId}.zip";
             var destinationOfZip = Path.Combine(
@@ -56,7 +61,7 @@
                 pathToZip,
                 destinationOfZip
             );
-            
+
             await PublishChangeEvent(
                 request,
                 exportFileName,
@@ -72,7 +77,7 @@
             CancellationToken cancellationToken
         )
         {
-            var exportPath = $"/Exports/{exportFileName}";
+            var exportPath = $"/{_directories.ExportsDirectory}/{exportFileName}";
             await _publisher.Publish(
                 new ClientActionFinishedAssetExportEvent(
                     request.ReferenceId,

@@ -5,6 +5,7 @@
     using System.IO;
     using System.Web;
 
+    using EventHorizon.Game.Server.Asset.Core.Api;
     using EventHorizon.Game.Server.Asset.FileManagement.Model;
     using EventHorizon.Game.Server.Asset.Policies;
 
@@ -23,10 +24,10 @@
     {
         private readonly FileSystemProvider _fileSystemProvider;
         private readonly string _basePath;
-        private readonly string _root = "wwwroot";
 
         public FileManagementController(
             IWebHostEnvironment hostingEnvironment,
+            AssetServerContentDirectories directories,
             FileSystemProvider fileSystemProvider
         )
         {
@@ -35,7 +36,7 @@
 
             _fileSystemProvider.RootFolder(Path.Combine(
                 _basePath,
-                _root
+                directories.AssetDirectory
             ));
         }
 
