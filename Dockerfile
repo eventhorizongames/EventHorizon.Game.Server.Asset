@@ -6,6 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /source
 COPY ["src/EventHorizon.Game.Server.Asset/EventHorizon.Game.Server.Asset.csproj", "src/EventHorizon.Game.Server.Asset/"]
+COPY ["src/EventHorizon.BackgroundTasks/EventHorizon.BackgroundTasks.csproj", "src/EventHorizon.BackgroundTasks/"]
 RUN dotnet restore "src/EventHorizon.Game.Server.Asset/EventHorizon.Game.Server.Asset.csproj"
 COPY . .
 RUN dotnet build --no-restore src/EventHorizon.Game.Server.Asset/EventHorizon.Game.Server.Asset.csproj -c Release -o /app/build
