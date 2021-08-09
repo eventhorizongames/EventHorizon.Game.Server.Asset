@@ -1,38 +1,34 @@
-﻿namespace EventHorizon.Game.Server.Asset.Export
+﻿namespace EventHorizon.Game.Server.Asset.Import
 {
     using System.IO;
 
     using EventHorizon.Game.Server.Asset.Core.Api;
-    using EventHorizon.Game.Server.Asset.Export.Api;
-    using EventHorizon.Game.Server.Asset.Export.Services;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
 
-    public static class ExportStartupExtensions
+    public static class ImportStartupExtensions
     {
-        public static IServiceCollection AddExportServices(
+        public static IServiceCollection AddImportServices(
             this IServiceCollection services
         ) => services
-            .AddSingleton<ExportArtifactService, StandardExportArtifactService>()
-            .AddSingleton<ExportTriggerService, StandardExportTriggerService>()
         ;
 
-        public static IApplicationBuilder UseExport(
+        public static IApplicationBuilder UseImport(
             this IApplicationBuilder app,
             IWebHostEnvironment env,
             AssetServerContentDirectories directories
         )
         {
-            var exportsPath = Path.Combine(
+            var importsPath = Path.Combine(
                 env.ContentRootPath,
                 directories.DataDirectory,
-                directories.ExportsDirectory
+                directories.ImportsDirectory
             );
             Directory.CreateDirectory(
-                exportsPath
+                importsPath
             );
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -40,10 +36,10 @@
                     Path.Combine(
                         env.ContentRootPath,
                         directories.DataDirectory,
-                        directories.ExportsDirectory
+                        directories.ImportsDirectory
                     )
                 ),
-                RequestPath = $"/{directories.ExportsDirectory}",
+                RequestPath = $"/{directories.ImportsDirectory}",
             });
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
@@ -51,10 +47,10 @@
                     Path.Combine(
                         env.ContentRootPath,
                         directories.DataDirectory,
-                        directories.ExportsDirectory
+                        directories.ImportsDirectory
                     )
                 ),
-                RequestPath = $"/{directories.ExportsDirectory}",
+                RequestPath = $"/{directories.ImportsDirectory}",
             });
 
             return app;

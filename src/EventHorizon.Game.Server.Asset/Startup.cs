@@ -11,6 +11,7 @@ namespace EventHorizon.Game.Server.Asset
     using EventHorizon.Game.Server.Asset.FileManagement.Api;
     using EventHorizon.Game.Server.Asset.FileManagement.Providers;
     using EventHorizon.Game.Server.Asset.Hub.Base;
+    using EventHorizon.Game.Server.Asset.Import;
     using EventHorizon.Game.Server.Asset.Policies;
     using EventHorizon.Game.Server.Asset.SwaggerFilters;
 
@@ -134,6 +135,8 @@ namespace EventHorizon.Game.Server.Asset
 
             services.AddExportServices();
 
+            services.AddImportServices();
+
             services.AddBackgroundTasksServices();
 
         }
@@ -161,7 +164,6 @@ namespace EventHorizon.Game.Server.Asset
                 ContentTypeProvider = provider,
                 RequestPath = "/Assets",
             });
-
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
                 FileProvider = new PhysicalFileProvider(
@@ -173,53 +175,15 @@ namespace EventHorizon.Game.Server.Asset
                 RequestPath = "/Assets",
             });
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(
-                        env.ContentRootPath,
-                        directories.DataDirectory,
-                        directories.ExportsDirectory
-                    )
-                ),
-                RequestPath = $"/{directories.ExportsDirectory}",
-            });
+            app.UseExport(
+                env,
+                directories
+            );
 
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(
-                        env.ContentRootPath,
-                        directories.DataDirectory,
-                        directories.ExportsDirectory
-                    )
-                ),
-                RequestPath = $"/{directories.ExportsDirectory}",
-            });
-
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(
-                        env.ContentRootPath,
-                        directories.DataDirectory,
-                        directories.ImportsDirectory
-                    )
-                ),
-                RequestPath = $"/{directories.ImportsDirectory}",
-            });
-
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(
-                        env.ContentRootPath,
-                        directories.DataDirectory,
-                        directories.ImportsDirectory
-                    )
-                ),
-                RequestPath = $"/{directories.ImportsDirectory}",
-            });
+            app.UseImport(
+                env,
+                directories
+            );
 
             app.UseRouting();
 
