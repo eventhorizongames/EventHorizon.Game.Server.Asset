@@ -162,7 +162,7 @@ namespace EventHorizon.Game.Server.Asset
             app.UseStaticFiles(new StaticFileOptions()
             {
                 ContentTypeProvider = provider,
-                RequestPath = "/Assets",
+                RequestPath = $"/{directories.AssetsDirectory}",
             });
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
@@ -172,7 +172,7 @@ namespace EventHorizon.Game.Server.Asset
                         directories.AssetDirectory
                     )
                 ),
-                RequestPath = "/Assets",
+                RequestPath = $"/{directories.AssetsDirectory}",
             });
 
             app.UseExport(

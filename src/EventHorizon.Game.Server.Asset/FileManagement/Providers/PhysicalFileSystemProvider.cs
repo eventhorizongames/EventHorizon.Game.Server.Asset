@@ -6,9 +6,11 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
+    using EventHorizon.Game.Server.Asset.Core.Api;
     using EventHorizon.Game.Server.Asset.FileManagement.Api;
     using EventHorizon.Game.Server.Asset.FileManagement.Model;
 
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -18,23 +20,28 @@
     {
         private readonly ILogger<PhysicalFileSystemProvider> _logger;
 
-        private readonly AccessDetails AccessDetails = new();
-        private readonly string rootName = string.Empty;
+        private readonly AccessDetails _accessDetails = new();
+        private readonly string _rootName = string.Empty;
 
         protected string contentRootPath = string.Empty;
         protected string[] allowedExtension = new string[] { "*" };
         protected string hostPath = string.Empty;
         protected string hostName = string.Empty;
-        //private string accessMessage = string.Empty;
 
         public PhysicalFileSystemProvider(
-            ILogger<PhysicalFileSystemProvider> logger
+            ILogger<PhysicalFileSystemProvider> logger,
+            IWebHostEnvironment hostingEnvironment,
+            AssetServerContentDirectories directories
         )
         {
             _logger = logger;
+            RootFolder(Path.Combine(
+                 hostingEnvironment.ContentRootPath,
+                 directories.AssetDirectory
+             ));
         }
 
-        public void RootFolder(
+        private void RootFolder(
             string name
         )
         {
@@ -78,7 +85,7 @@
                     throw new UnauthorizedAccessException(
                         string.Format(
                             "'{0}' is not accessible. You need permission to perform the write action.",
-                            GetFileNameFromPath(rootName + path)
+                            GetFileNameFromPath(_rootName + path)
                         )
                     );
                 }
@@ -178,7 +185,7 @@
                         throw new UnauthorizedAccessException(
                             string.Format(
                                 "'{0}' is not accessible. You need permission to perform the write action.",
-                                GetFileNameFromPath(rootName + path + names[i]))
+                                GetFileNameFromPath(_rootName + path + names[i]))
                         );
                     }
                 }
@@ -435,7 +442,7 @@
                     throw new UnauthorizedAccessException(
                         string.Format(
                             "'{0}' is not accessible. You need permission to perform the read action.",
-                            GetFileNameFromPath(rootName + path)
+                            GetFileNameFromPath(_rootName + path)
                         )
                     );
                 }
@@ -985,16 +992,16 @@
             var FilePermission = new AccessPermission();
             if (isFile)
             {
-                if (AccessDetails.AccessRules == null) return null;
+                if (_accessDetails.AccessRules == null) return null;
                 var nameExtension = Path.GetExtension(name).ToLower();
                 var fileName = Path.GetFileNameWithoutExtension(name);
                 var currentPath = GetFilePath(location + name);
-                foreach (var fileRule in AccessDetails.AccessRules)
+                foreach (var fileRule in _accessDetails.AccessRules)
                 {
                     if (!string.IsNullOrEmpty(fileRule.Path)
                         && fileRule.IsFile
                         && (fileRule.Role == null
-                            || fileRule.Role == AccessDetails.Role)
+                            || fileRule.Role == _accessDetails.Role)
                     )
                     {
                         if (fileRule.Path.IndexOf("*.*") > -1)
@@ -1036,13 +1043,13 @@
             }
             else
             {
-                if (AccessDetails.AccessRules == null) { return null; }
-                foreach (var folderRule in AccessDetails.AccessRules)
+                if (_accessDetails.AccessRules == null) { return null; }
+                foreach (var folderRule in _accessDetails.AccessRules)
                 {
                     if (folderRule.Path != null
                         && folderRule.IsFile == false
                         && (folderRule.Role == null
-                            || folderRule.Role == AccessDetails.Role
+                            || folderRule.Role == _accessDetails.Role
                         )
                     )
                     {

@@ -9,10 +9,6 @@
 
     public interface FileSystemProvider
     {
-        void RootFolder(
-            string root
-        );
-
         FileSystemResponse GetFiles(
             string path,
             params FileSystemDirectoryContent[] data

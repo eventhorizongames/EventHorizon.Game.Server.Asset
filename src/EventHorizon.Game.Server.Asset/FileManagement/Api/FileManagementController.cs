@@ -2,15 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
+    using System.Threading.Tasks;
     using System.Web;
 
-    using EventHorizon.Game.Server.Asset.Core.Api;
+    using EventHorizon.Game.Server.Asset.Core.Command;
     using EventHorizon.Game.Server.Asset.FileManagement.Model;
+    using EventHorizon.Game.Server.Asset.FileManagement.Query;
     using EventHorizon.Game.Server.Asset.Policies;
 
+    using MediatR;
+
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
@@ -22,22 +24,36 @@
     public class FileManagementController
         : Controller
     {
+        private readonly ISender _sender;
         private readonly FileSystemProvider _fileSystemProvider;
-        private readonly string _basePath;
 
         public FileManagementController(
-            IWebHostEnvironment hostingEnvironment,
-            AssetServerContentDirectories directories,
+            ISender sender,
             FileSystemProvider fileSystemProvider
         )
         {
-            _basePath = hostingEnvironment.ContentRootPath;
+            _sender = sender;
             _fileSystemProvider = fileSystemProvider;
+        }
 
-            _fileSystemProvider.RootFolder(Path.Combine(
-                _basePath,
-                directories.AssetDirectory
-            ));
+        [HttpGet("Assets")]
+        [ProducesResponseType(typeof(CommandResult<FileManagementAssets>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(CommandResult<FileManagementAssets>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Assets()
+        {
+            var result = await _sender.Send(
+                new QueryForFileManagementAssets()
+            );
+
+            if (!result)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(
+                result
+            );
         }
 
         [HttpGet("Search")]
