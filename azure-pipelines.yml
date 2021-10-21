@@ -15,7 +15,6 @@ steps:
     command: build
     containerRegistry: docker-hub
     repository: canhorn/ehz-platform-server-asset
-    Dockerfile: src/EventHorizon.Game.Server.Asset/Dockerfile
     buildContext: $(Build.SourcesDirectory)
     arguments: --build-arg BUILD_VERSION=$(Build.BuildNumber)
     tags: |
@@ -28,7 +27,6 @@ steps:
     command: push
     containerRegistry: docker-hub
     repository: canhorn/ehz-platform-server-asset
-    Dockerfile: src/EventHorizon.Game.Server.Asset/Dockerfile
     buildContext: $(Build.SourcesDirectory)
     tags: |
       latest
