@@ -28,6 +28,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\EventHorizon.BackgroundTasks\EventHorizon.BackgroundTasks.csproj" />
+        <ProjectReference Include="..\EventHorizon.Platform.Integration\EventHorizon.Platform.Integration.csproj" />
     </ItemGroup>
 
 </Project>

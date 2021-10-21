@@ -14,6 +14,7 @@ namespace EventHorizon.Game.Server.Asset
     using EventHorizon.Game.Server.Asset.Import;
     using EventHorizon.Game.Server.Asset.Policies;
     using EventHorizon.Game.Server.Asset.SwaggerFilters;
+    using EventHorizon.Platform;
 
     using MediatR;
 
@@ -192,6 +193,11 @@ namespace EventHorizon.Game.Server.Asset
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapPlatformDetails(
+                    options => options.SetVersion(
+                        Configuration["APPLICATION_VERSION"]
+                    )
+                );
 
                 endpoints.MapHub<AdminHub>("/admin");
 

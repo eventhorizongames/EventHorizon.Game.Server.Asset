@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.181
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31808.319
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EC74EBE3-C2B3-4E44-89B0-B7647FB27D0C}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventHorizon.Game.Server.Asset", "src\EventHorizon.Game.Server.Asset\EventHorizon.Game.Server.Asset.csproj", "{F687983C-7FA0-468A-8487-CF676A31DE19}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventHorizon.BackgroundTasks", "src\EventHorizon.BackgroundTasks\EventHorizon.BackgroundTasks.csproj", "{16080621-9CF5-4D6F-9132-58EE2E0BBAE8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventHorizon.Platform.Integration", "src\EventHorizon.Platform.Integration\EventHorizon.Platform.Integration.csproj", "{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,18 @@ Global
 		{16080621-9CF5-4D6F-9132-58EE2E0BBAE8}.Release|x64.Build.0 = Release|Any CPU
 		{16080621-9CF5-4D6F-9132-58EE2E0BBAE8}.Release|x86.ActiveCfg = Release|Any CPU
 		{16080621-9CF5-4D6F-9132-58EE2E0BBAE8}.Release|x86.Build.0 = Release|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Debug|x64.Build.0 = Debug|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Debug|x86.Build.0 = Debug|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Release|x64.ActiveCfg = Release|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Release|x64.Build.0 = Release|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Release|x86.ActiveCfg = Release|Any CPU
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +76,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F687983C-7FA0-468A-8487-CF676A31DE19} = {EC74EBE3-C2B3-4E44-89B0-B7647FB27D0C}
 		{16080621-9CF5-4D6F-9132-58EE2E0BBAE8} = {EC74EBE3-C2B3-4E44-89B0-B7647FB27D0C}
+		{FE02588D-7D6D-4E0B-8CEB-1D71EB35724B} = {EC74EBE3-C2B3-4E44-89B0-B7647FB27D0C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7D893EEE-E128-4DEA-89AE-A4FD828642E4}
