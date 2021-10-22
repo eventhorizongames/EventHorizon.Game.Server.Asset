@@ -205,7 +205,7 @@ namespace EventHorizon.Game.Server.Asset
                 endpoints.MapGet("/", async context =>
                 {
                     context.Response.ContentType = "text/html";
-                    await context.Response.WriteAsync("<h1>Hello World!</h1>");
+                    await context.Response.WriteAsync("<h1>EventHorizon Game Development Platform - Asset Server!</h1>");
                     await context.Response.WriteAsync("<a href=\"/swagger\">Swagger API</a>");
                     await context.Response.WriteAsync("<br />");
                     await context.Response.WriteAsync("<br />");
