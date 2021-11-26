@@ -50,7 +50,7 @@ public class RunImportOfAssetFileCommandHandler
 
             var uploadResult = await _sender.Send(
                 new RunUploadOfServiceImportFileCommand(
-                    "Asset",
+                    "Asset".ToLowerInvariant(),
                     file
                 ),
                 cancellationToken

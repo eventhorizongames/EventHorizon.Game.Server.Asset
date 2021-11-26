@@ -122,6 +122,9 @@ public class RunUploadOfServiceImportFileCommandHandler
             _settings.ImportsDirectory,
             service
        );
+        Directory.CreateDirectory(
+            importsDirectoryFullName
+        );
         var filesToDelete = Directory.GetFiles(
             importsDirectoryFullName
         ).OrderBy(
