@@ -16,15 +16,15 @@
     public class QueryForFileManagementAssetsHandler
         : IRequestHandler<QueryForFileManagementAssets, CommandResult<FileManagementAssets>>
     {
-        private readonly AssetServerContentDirectories _directories;
+        private readonly AssetServerSettings _settings;
         private readonly FileSystemProvider _fileSystemProvider;
 
         public QueryForFileManagementAssetsHandler(
-            AssetServerContentDirectories directories,
+            AssetServerSettings settings,
             FileSystemProvider fileSystemProvider
         )
         {
-            _directories = directories;
+            _settings = settings;
             _fileSystemProvider = fileSystemProvider;
         }
 
@@ -43,7 +43,7 @@
                 FileSystemDirectoryContent content
             )
             {
-                return $"/{_directories.AssetsDirectory}{content.FilterPath.Replace("\\", "/")}";
+                return $"/{_settings.AssetsDirectory}{content.FilterPath.Replace("\\", "/")}";
             }
 
             return new CommandResult<FileManagementAssets>(

@@ -31,13 +31,13 @@
         public PhysicalFileSystemProvider(
             ILogger<PhysicalFileSystemProvider> logger,
             IWebHostEnvironment hostingEnvironment,
-            AssetServerContentDirectories directories
+            AssetServerSettings settings
         )
         {
             _logger = logger;
             RootFolder(Path.Combine(
                  hostingEnvironment.ContentRootPath,
-                 directories.AssetDirectory
+                 settings.AssetDirectory
              ));
         }
 

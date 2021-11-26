@@ -1,37 +1,35 @@
-﻿namespace EventHorizon.Game.Server.Asset.Export.ClientActions
+﻿namespace EventHorizon.Game.Server.Asset.Export.ClientActions;
+using System.Threading;
+using System.Threading.Tasks;
+
+using EventHorizon.Game.Server.Asset.Hub.Base;
+
+using MediatR;
+
+using Microsoft.AspNetCore.SignalR;
+
+public class ClientActionFinishedAssetExportEventHandler
+    : INotificationHandler<ClientActionFinishedAssetExportEvent>
 {
-    using System.Threading;
-    using System.Threading.Tasks;
+    private readonly IHubContext<AdminHub> _hubContext;
 
-    using EventHorizon.Game.Server.Asset.Hub.Base;
-
-    using MediatR;
-
-    using Microsoft.AspNetCore.SignalR;
-
-    public class ClientActionFinishedAssetExportEventHandler
-        : INotificationHandler<ClientActionFinishedAssetExportEvent>
+    public ClientActionFinishedAssetExportEventHandler(
+        IHubContext<AdminHub> hubContext
+    )
     {
-        private readonly IHubContext<AdminHub> _hubContext;
+        _hubContext = hubContext;
+    }
 
-        public ClientActionFinishedAssetExportEventHandler(
-            IHubContext<AdminHub> hubContext
-        )
-        {
-            _hubContext = hubContext;
-        }
-
-        public async Task Handle(
-            ClientActionFinishedAssetExportEvent notification,
-            CancellationToken cancellationToken
-        )
-        {
-            await _hubContext.Clients.All.SendAsync(
-                "ExportFinished",
-                notification.ReferenceId,
-                notification.ExportPath,
-                cancellationToken: cancellationToken
-            );
-        }
+    public async Task Handle(
+        ClientActionFinishedAssetExportEvent notification,
+        CancellationToken cancellationToken
+    )
+    {
+        await _hubContext.Clients.All.SendAsync(
+            "AssetExportFinished",
+            notification.ReferenceId,
+            notification.ExportPath,
+            cancellationToken: cancellationToken
+        );
     }
 }

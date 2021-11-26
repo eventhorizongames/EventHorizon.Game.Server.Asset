@@ -1,20 +1,18 @@
-﻿namespace EventHorizon.Game.Server.Asset.Export.ClientActions
+﻿namespace EventHorizon.Game.Server.Asset.Export.ClientActions;
+using MediatR;
+
+public struct ClientActionFinishedAssetExportEvent
+    : INotification
 {
-    using MediatR;
+    public string ReferenceId { get; }
+    public string ExportPath { get; }
 
-    public struct ClientActionFinishedAssetExportEvent
-        : INotification
+    public ClientActionFinishedAssetExportEvent(
+        string referenceId,
+        string exportPath
+    )
     {
-        public string ReferenceId { get; }
-        public string ExportPath { get; }
-
-        public ClientActionFinishedAssetExportEvent(
-            string referenceId,
-            string exportPath
-        )
-        {
-            ReferenceId = referenceId;
-            ExportPath = exportPath;
-        }
+        ReferenceId = referenceId;
+        ExportPath = exportPath;
     }
 }

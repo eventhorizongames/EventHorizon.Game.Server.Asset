@@ -1,12 +1,10 @@
-﻿namespace EventHorizon.Game.Server.Asset.Export.Tasks
+﻿namespace EventHorizon.Game.Server.Asset.Export.Tasks;
+using System;
+
+using EventHorizon.BackgroundTasks.Model;
+
+public class ExportAssetsTask
+    : BackgroundTask
 {
-    using System;
-
-    using EventHorizon.BackgroundTasks.Model;
-
-    public class ExportAssetsTask
-        : BackgroundTask
-    {
-        public string ReferenceId { get; } = Guid.NewGuid().ToString();
-    }
+    public string ReferenceId { get; } = Guid.NewGuid().ToString();
 }

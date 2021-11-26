@@ -1,23 +1,22 @@
-﻿namespace EventHorizon.Game.Server.Asset.Hub.Base
+﻿namespace EventHorizon.Game.Server.Asset.Hub.Base;
+
+using EventHorizon.Game.Server.Asset.Policies;
+
+using MediatR;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+
+[Authorize(UserIdOrAdminPolicy.PolicyName)]
+public partial class AdminHub
+    : Hub
 {
-    using EventHorizon.Game.Server.Asset.Policies;
+    private readonly ISender _sender;
 
-    using MediatR;
-
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.SignalR;
-
-    [Authorize(UserIdOrAdminPolicy.PolicyName)]
-    public partial class AdminHub
-        : Hub
+    public AdminHub(
+        ISender sender
+    )
     {
-        private readonly ISender _sender;
-
-        public AdminHub(
-            ISender sender
-        )
-        {
-            _sender = sender;
-        }
+        _sender = sender;
     }
 }

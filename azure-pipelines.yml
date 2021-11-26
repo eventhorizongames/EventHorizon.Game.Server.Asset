@@ -2,6 +2,11 @@ name: $(MajorVersion).$(MinorVersion)$(rev:.r)
 pool:
   name: Default
 
+variables:
+  BuildConfiguration: Release
+  BuildPlatform: x64
+  IsMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+
 steps:
 - task: DockerInstaller@0
   displayName: Docker Installer
@@ -22,7 +27,18 @@ steps:
       $(Build.BuildNumber)
 
 - task: Docker@2
-  displayName: Push Image - EventHorizon.Game.Server.Asset 
+  displayName: Push Build Image - EventHorizon.Game.Server.Asset 
+  inputs: 
+    command: push
+    containerRegistry: docker-hub
+    repository: canhorn/ehz-platform-server-asset
+    buildContext: $(Build.SourcesDirectory)
+    tags: |
+      $(Build.BuildNumber)
+
+- task: Docker@2
+  displayName: Push Latest Image - EventHorizon.Game.Server.Asset 
+  condition: and(succeeded(), eq(variables.IsMain, true))
   inputs: 
     command: push
     containerRegistry: docker-hub
@@ -30,4 +46,3 @@ steps:
     buildContext: $(Build.SourcesDirectory)
     tags: |
       latest
-      $(Build.BuildNumber)
