@@ -5,7 +5,7 @@ pool:
 variables:
   BuildConfiguration: Release
   BuildPlatform: x64
-  IsMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+  IsMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 steps:
 - task: DockerInstaller@0
