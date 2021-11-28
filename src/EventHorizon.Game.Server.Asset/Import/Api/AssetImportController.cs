@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/Asset/Import")]
-[Authorize(UserIdOrAdminPolicy.PolicyName)]
+[Authorize(UserIdOrClientIdOrAdminPolicy.PolicyName)]
 public class AssetImportController
     : Controller
 {

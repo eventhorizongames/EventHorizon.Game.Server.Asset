@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 /// https://github.com/SyncfusionExamples/ej2-aspcore-file-provider/blob/master/Models/PhysicalFileProvider.cs
 /// </summary>
 [Route("api/[controller]")]
-[Authorize(UserIdOrAdminPolicy.PolicyName)]
+[Authorize(UserIdOrClientIdOrAdminPolicy.PolicyName)]
 public class FileManagementController
     : Controller
 {

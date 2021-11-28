@@ -95,7 +95,8 @@ public class Startup
             });
         services.AddAuthorization(
             options => options.AddUserIdOrAdminPolicy(
-                Configuration["OwnerDetails:UserId"]
+                Configuration["OwnerDetails:UserId"],
+                Configuration["OwnerDetails:PlatformId"]
             )
         );
 

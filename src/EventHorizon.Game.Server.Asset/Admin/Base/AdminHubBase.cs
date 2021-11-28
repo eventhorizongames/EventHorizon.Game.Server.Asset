@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-[Authorize(UserIdOrAdminPolicy.PolicyName)]
+[Authorize(UserIdOrClientIdOrAdminPolicy.PolicyName)]
 public partial class AdminHub
     : Hub
 {

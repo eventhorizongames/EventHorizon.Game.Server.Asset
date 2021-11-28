@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/Asset/Export")]
-[Authorize(UserIdOrAdminPolicy.PolicyName)]
+[Authorize(UserIdOrClientIdOrAdminPolicy.PolicyName)]
 public class AssetExportController
     : Controller
 {

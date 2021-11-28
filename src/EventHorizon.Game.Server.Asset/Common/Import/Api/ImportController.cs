@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[Controller]")]
-[Authorize(UserIdOrAdminPolicy.PolicyName)]
+[Authorize(UserIdOrClientIdOrAdminPolicy.PolicyName)]
 public class ImportController
     : Controller
 {
