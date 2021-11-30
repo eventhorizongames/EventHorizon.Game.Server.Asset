@@ -44,31 +44,32 @@ public class RunUploadOfServiceImportFileCommandHandler
     {
         try
         {
+            var service = request.Service.ToLowerInvariant();
             var file = request.File;
 
             var (fullName, fileName) = SaveFileIntoImportsDirectory(
-                request.Service,
+                service,
                 file
             );
             var importPath = fileName.ToServicePath(
                  _settings.ImportsDirectory,
-                 request.Service
+                 service
              );
 
             CleanupOldImportedFiles(
-                request.Service
+                service
             );
 
             await _publisher.Publish(
                 new ClientActionFinishedAssetImportUploadEvent(
-                    request.Service,
+                    service,
                     importPath
                 ),
                 cancellationToken
             );
 
             return new RunUploadOfServiceImportFileResult(
-                request.Service,
+                service,
                 fullName,
                 importPath
             );

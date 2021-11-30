@@ -44,30 +44,31 @@ public class RunUploadOfServiceBackupFileCommandHandler
     {
         try
         {
+            var service = request.Service.ToLowerInvariant();
             var file = request.File;
 
             var (fullName, fileName) = SaveFileIntoBackupsDirectory(
-                request.Service,
+                service,
                 file
             );
             var backupPath = fileName.ToServicePath(
                 _settings.BackupsDirectory,
-                request.Service
+                service
             );
             CleanupOldBackupedFiles(
-                request.Service
+                service
             );
 
             await _publisher.Publish(
                 new ClientActionFinishedServiceBackupUploadEvent(
-                    request.Service,
+                    service,
                     backupPath
                 ),
                 cancellationToken
             );
 
             return new RunUploadOfServiceBackupFileResult(
-                request.Service,
+                service,
                 fullName,
                 backupPath
             );

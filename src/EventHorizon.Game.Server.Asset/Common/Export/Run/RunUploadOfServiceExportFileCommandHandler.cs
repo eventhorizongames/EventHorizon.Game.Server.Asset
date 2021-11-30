@@ -44,30 +44,31 @@ public class RunUploadOfServiceExportFileCommandHandler
     {
         try
         {
+            var service = request.Service.ToLowerInvariant();
             var file = request.File;
 
             var (fullName, fileName) = SaveFileIntoExportsDirectory(
-                request.Service,
+                service,
                 file
             );
             var exportPath = fileName.ToServicePath(
                 _settings.ExportsDirectory,
-                request.Service
+                service
             );
             CleanupOldExportedFiles(
-                request.Service
+                service
             );
 
             await _publisher.Publish(
                 new ClientActionFinishedServiceExportUploadEvent(
-                    request.Service,
+                    service,
                     exportPath
                 ),
                 cancellationToken
             );
 
             return new RunUploadOfServiceExportFileResult(
-                request.Service,
+                service,
                 fullName,
                 exportPath
             );
