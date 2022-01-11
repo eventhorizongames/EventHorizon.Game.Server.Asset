@@ -1,4 +1,5 @@
 ﻿namespace EventHorizon.Game.Server.Asset.Export.Api;
+
 using System.Threading.Tasks;
 
 using EventHorizon.Game.Server.Asset.FileManagement.Model;
@@ -14,22 +15,25 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("api/Asset/Import")]
 [Authorize(UserIdOrClientIdOrAdminPolicy.PolicyName)]
-public class AssetImportController
-    : Controller
+public class AssetImportController : Controller
 {
     private readonly ISender _sender;
 
-    public AssetImportController(
-        ISender sender
-    )
+    public AssetImportController(ISender sender)
     {
         _sender = sender;
     }
 
     [HttpPost("Upload")]
     [Consumes("multipart/form-data", "file-import/import")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(
+        typeof(AssetUploadFileResult),
+        StatusCodes.Status201Created
+    )]
+    [ProducesResponseType(
+        typeof(ErrorDetails),
+        StatusCodes.Status400BadRequest
+    )]
     public async Task<IActionResult> UploadFileAsync(
         IFormFile? file
     )
@@ -41,15 +45,14 @@ public class AssetImportController
                 {
                     Code = StatusCodes.Status400BadRequest,
                     Message = "No File Found to Import",
-                    ErrorCode = AssetImportErrorCodes.MISSING_API_FILE_ARGUMENT,
+                    ErrorCode =
+                        AssetImportErrorCodes.MISSING_API_FILE_ARGUMENT,
                 }
             );
         }
 
         var result = await _sender.Send(
-            new RunImportOfAssetFileCommand(
-                file
-            )
+            new RunImportOfAssetFileCommand(file)
         );
 
         if (!result.Success)
@@ -64,6 +67,23 @@ public class AssetImportController
             );
         }
 
-        return Ok();
+        return Created(
+            result.Result.ImportPath,
+            new AssetUploadFileResult(result.Result)
+        );
+    }
+
+    public class AssetUploadFileResult
+    {
+        public string Path { get; }
+        public string Service { get; }
+
+        public AssetUploadFileResult(
+            RunImportOfAssetFileResult result
+        )
+        {
+            Path = result.ImportPath;
+            Service = result.Service;
+        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace EventHorizon.Game.Server.Asset.Import.Run;
+
 using System;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +19,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 public class RunImportOfAssetFileCommandHandler
-    : IRequestHandler<RunImportOfAssetFileCommand, StandardCommandResult>
+    : IRequestHandler<
+          RunImportOfAssetFileCommand,
+          CommandResult<RunImportOfAssetFileResult>
+      >
 {
     private readonly ILogger _logger;
     private readonly IWebHostEnvironment _environment;
@@ -39,7 +42,9 @@ public class RunImportOfAssetFileCommandHandler
         _settings = settings;
     }
 
-    public async Task<StandardCommandResult> Handle(
+    public async Task<
+        CommandResult<RunImportOfAssetFileResult>
+    > Handle(
         RunImportOfAssetFileCommand request,
         CancellationToken cancellationToken
     )
@@ -78,16 +83,12 @@ public class RunImportOfAssetFileCommandHandler
                 _settings.AssetDirectory
             );
             var cleanupResult = await _sender.Send(
-                new CleanupDirectoryCommand(
-                    pathToUnzip
-                ),
+                new CleanupDirectoryCommand(pathToUnzip),
                 cancellationToken
             );
             if (!cleanupResult)
             {
-                return new(
-                    cleanupResult.ErrorCode
-                );
+                return new(cleanupResult.ErrorCode);
             }
 
             ZipFile.ExtractToDirectory(
@@ -95,7 +96,10 @@ public class RunImportOfAssetFileCommandHandler
                 pathToUnzip
             );
 
-            return new();
+            return new RunImportOfAssetFileResult(
+                uploadResult.Result.Service,
+                uploadResult.Result.ImportPath
+            );
         }
         catch (Exception ex)
         {
